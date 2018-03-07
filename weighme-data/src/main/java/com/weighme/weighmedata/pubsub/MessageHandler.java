@@ -91,8 +91,9 @@ public class MessageHandler {
 			  this.subscriptionId = "weighme-test";
 		  }
 		  
-		  public void setDataWriter(DataWriter writer) {
+		  public Builder setDataWriter(DataWriter writer) {
 			  this.writer = writer;
+			  return this;
 		  }
 		  
 		  public MessageHandler build() {
