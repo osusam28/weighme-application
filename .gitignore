@@ -1,1 +1,9 @@
 *.zip
+/.metadata/
+*/target/
+*/log/
+*.json
+.recommenders/
+**/.classpath/
+**/.project/
+**/.settings/
