@@ -1,45 +1,45 @@
 package com.weighme.weighmedata.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 
+import com.weighme.weighmedata.database.WeighEventDatastoreWriter;
 import com.weighme.weighmedata.pubsub.MessageHandler;
+import com.weighme.weighmedata.pubsub.MessageHandlerRunner;
 
 @Service
 public class WeighmeDataService {
 	
-	private MessageHandler handler;
-	private String projectId;
-	private String subscriptionId;
+	private Map<String, MessageHandlerRunner> handlers;
 	
 	public WeighmeDataService() {
-		projectId = "weighme-dev";
-		subscriptionId = "weighme-test";
+		handlers = new HashMap<String, MessageHandlerRunner>();
 	}
 	
-	public void startDataService() {
-		
-		if(handler.isRunning()) {
-			System.out.println("Already running ...");
-			return;
-		}
-		
-		handler = new MessageHandler.Builder(
-				projectId, subscriptionId).build();
-		
-		try {
-			handler.startMessageProcess();
-		}
-		catch (Exception e) {
-			System.out.println("Error occured when starting message process ...");
+	public void startDataService(String projectId, String kind, String... subscriptionIds) {
+		for(String subscriptionId : subscriptionIds) {
+			MessageHandler handler = new MessageHandler.Builder(
+					projectId, subscriptionId).build();
+			
+			WeighEventDatastoreWriter writer = null;
+			if(subscriptionId.equals("weighme-test")) {
+				writer = new WeighEventDatastoreWriter
+						.Builder(projectId, kind).build();
+			}
+			
+			MessageHandlerRunner runner = new MessageHandlerRunner(handler, writer);
+			runner.start();
+			
+			handlers.put(subscriptionId, runner);
 		}
 	}
 	
-	public void stopDataService() {
-		if(handler.isRunning()) {
-			System.out.println("Already stopped ...");
-			return;
+	public void stopDataService(String... subscriptionNames) {
+		for(String subscriptionName : subscriptionNames) {
+			handlers.get(subscriptionName).stopMessageProcess();
+			handlers.remove(subscriptionName);
 		}
-		
-		handler.stopMessageProcess();
 	}
 }

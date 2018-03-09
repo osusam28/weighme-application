@@ -12,6 +12,6 @@ public class WeighmeDataStartController {
 	private WeighmeDataService dataService;
 	
 	public void start() {
-		dataService.startDataService();
+		
 	}
 }

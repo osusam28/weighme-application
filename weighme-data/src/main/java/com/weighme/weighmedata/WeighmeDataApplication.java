@@ -18,7 +18,6 @@ public class WeighmeDataApplication {
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(WeighmeDataApplication.class, args);
 		
-		//new MessageHandler.Builder().build().startMessageProcess();
 	}
 	
 	public WeighmeDataApplication() {
@@ -28,6 +27,6 @@ public class WeighmeDataApplication {
 	@PostConstruct
 	public void init() throws Exception {
 		System.out.println("Starting service ...");
-		dataService.startDataService();
+		dataService.startDataService("weighme-dev", "device-weigh-detail", "weighme-test");
 	}
 }
